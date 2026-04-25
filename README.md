@@ -36,21 +36,23 @@ npx skills add broniyasinnik/cursor-skills --list
 
 ```bash
 cd /path/to/your/project
-npx skills add broniyasinnik/cursor-skills --all -a cursor
+npx skills add broniyasinnik/cursor-skills --skill '*' -a cursor -y
 ```
 
-This drops the skills into `./.agents/skills/`. Cursor reads from there automatically. Add `.agents/` to your project's `.gitignore` so the symlinks aren't committed.
+This drops the skills into `./.agents/skills/` (which Cursor reads from automatically) and only that folder. Add `.agents/` to your project's `.gitignore` so the install isn't committed.
+
+> Do **not** use `--all` instead of `--skill '*' -a cursor`. The `--all` flag means "install all skills to **all agents**", which creates 29+ unwanted dotfolders (`.augment/`, `.bob/`, `.claude/`, etc.) for every other agent the CLI knows about.
 
 ### Install a specific skill
 
 ```bash
-npx skills add broniyasinnik/cursor-skills --skill bayesian-pymc -a cursor
+npx skills add broniyasinnik/cursor-skills --skill bayesian-pymc -a cursor -y
 ```
 
 ### Install globally (every project on this machine)
 
 ```bash
-npx skills add broniyasinnik/cursor-skills --all -g -a cursor
+npx skills add broniyasinnik/cursor-skills --skill '*' -g -a cursor -y
 ```
 
 `-g` installs to `~/.cursor/skills/`.
