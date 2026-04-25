@@ -169,6 +169,8 @@ Recommended structure:
 - anomalies / alerts
 - detail table
 
+- For dashboards driven by an external process writing files on disk, prefer `mo.watch.file()` over manual refresh buttons. See section 6 "Reactive file-watch pattern".
+
 ## 4. Cell Design and Reactivity
 
 ### Cell ordering
@@ -196,6 +198,15 @@ Prefer this order:
 - Avoid `mo.state()` unless you need bidirectional UI sync or accumulated callback state. See [STATE.md](references/STATE.md) for details.
 - If notebook logic becomes large, move helper code into nearby Python modules and import it.
 - Use `@mo.cache` on helper functions to prevent long-running tasks from executing multiple times during reactive updates.
+
+### Reacting to non-Python file changes
+
+By default marimo's reactivity is driven by Python variable dependencies between cells. When a cell needs to re-run because something on disk changed (and not because a Python variable changed), use the `mo.watch` API:
+
+- `mo.watch.file(path)` returns a reactive `FileState` that exposes most `pathlib.Path` methods (except `open()`, `rename()`, `replace()`). Cells that read from it re-run when the file's contents change.
+- `mo.watch.directory(path)` returns a `DirectoryState` that reacts to files being added or removed (not to file contents, and does not follow symlinks).
+
+Use these for **reading** state from disk, not writing it back — the caveats mirror `mo.state()` (see [STATE.md](references/STATE.md)). Don't reach for `mo.watch.*` when ordinary cell dependencies already capture the data flow.
 
 ### Naming guidance
 
@@ -456,6 +467,39 @@ The cache lives in memory for the duration of the active kernel session.
 To combine caching with UI optimization, place cached functions inside mo.ui.tabs(..., lazy=True) so the computation only triggers when the user views the tab, and is instant on subsequent views.
 
 Do not use @mo.cache for functions that cause side effects (like writing to a database or mutating external state), as they will be skipped on cache hits.
+
+### Reactive file-watch pattern
+
+Use when an external process — a cron job, data pipeline, training run, or another editor — writes data, configuration, or prompts that the notebook should reflect immediately, without the user clicking a refresh button.
+
+```python
+@app.cell
+def _(mo):
+    metrics_path = mo.watch.file("data/latest_metrics.csv")
+    return (metrics_path,)
+
+@app.cell
+def _(metrics_path, pd):
+    metrics_df = pd.read_csv(metrics_path)
+    metrics_df
+    return (metrics_df,)
+```
+
+When `data/latest_metrics.csv` is rewritten on disk, the second cell re-runs and the dashboard updates — no manual refresh needed.
+
+Common use cases:
+
+- **Live monitoring dashboards** reading from CSV/parquet/JSON files written by a pipeline or cron job.
+- **Config-driven notebooks** that should react to edits in a YAML/JSON config file.
+- **Prompt or SQL files** kept in version control and edited in your IDE while the notebook is open in the browser.
+- **Training-run dashboards** that tail a metrics file as a model trains.
+- **Inbox-style folders**: combine `mo.watch.directory("uploads/")` to detect new files, then `mo.watch.file(...)` on the file you actually consume.
+
+Guidelines:
+
+- Treat the returned `FileState` / `DirectoryState` as read-only. Do writes through a plain `pathlib.Path` and let downstream cells re-trigger via reactivity.
+- File-system watching is cheap per file but not free for large trees — prefer specific paths over watching whole project roots.
+- Combine with `@mo.cache` on expensive parsers so re-reads after a tiny file change don't redo unrelated heavy work.
 
 ### Expensive computation gate
 
