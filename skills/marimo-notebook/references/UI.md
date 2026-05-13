@@ -79,7 +79,9 @@ group_by_form = mo.ui.dropdown(
 )
 ```
 
-However, the user may also want to use other components. Popular alternatives include the `ScatterWidget` from the `drawdata` library, `moutils`, and `wigglystuff`. 
+However, the user may also want to use other components. Popular alternatives include the `ScatterWidget` from the `drawdata` library, `moutils`, and **wigglystuff**.
+
+For **hierarchical / nested tabular** data (e.g. team → project → person, region → country → city, taxonomies, file-tree-shaped keys with numeric roll-ups), prefer **`wigglystuff.NestedTable`** wrapped in `mo.ui.anywidget(...)` over flattening everything into `mo.ui.table` — see [NESTED-TABLE.md](NESTED-TABLE.md).
 
 For custom classes and static HTML representations you can also use the `_display_` method. 
 

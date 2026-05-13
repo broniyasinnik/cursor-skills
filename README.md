@@ -18,6 +18,7 @@ These skills are project-agnostic and meant to be installed via the [`vercel-lab
 | [`wasm-compatibility`](skills/wasm-compatibility/) | Check whether a marimo notebook is WebAssembly-compatible. |
 | [`add-molab-badge`](skills/add-molab-badge/) | Add an "Open in molab" badge linking to a marimo notebook. |
 | [`anywidget-generator`](skills/anywidget-generator/) | Generate `anywidget` components for marimo notebooks. |
+| [`brainstorm`](skills/brainstorm/) | Open-problem thinking partner: sharp “professor” dialogue, rotate lenses, stress-test, short brainstorm note. |
 | [`implement-paper`](skills/implement-paper/) | Implement a research paper as an interactive marimo notebook. |
 
 > The `marimo-notebook` and `marimo-pair` skills are not git-forks. They are plain folder copies that I edit freely. There is no automatic upstream sync — if I want a future improvement from `marimo-team`, I have to look at their repo manually and copy the changes I want.

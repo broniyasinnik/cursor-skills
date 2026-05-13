@@ -325,6 +325,7 @@ Use these marimo layout APIs where appropriate:
 - `mo.accordion` for optional detail
 - `mo.nav_menu` or `mo.outline` for larger notebook navigation
 - `mo.lazy` for expensive content that should load later
+- `wigglystuff.NestedTable` (via `mo.ui.anywidget`) for drill-down tables over hierarchical data with additive metrics — see [NESTED-TABLE.md](references/NESTED-TABLE.md)
 
 ### UI composition patterns
 
@@ -587,6 +588,7 @@ Before finalizing, check:
 
 - For SQL use in marimo see [SQL.md](references/SQL.md)
 - For UI elements in marimo [UI.md](references/UI.md)
+- For nested / drill-down tables with `NestedTable` [NESTED-TABLE.md](references/NESTED-TABLE.md)
 - For exposing functions/classes as top level imports [TOP-LEVEL-IMPORTS.md](references/TOP-LEVEL-IMPORTS.md)
 - For exporting notebooks (PDF, HTML, markdown, etc.) [EXPORTS.md](references/EXPORTS.md)
 - For state management and reactivity [STATE.md](references/STATE.md)
